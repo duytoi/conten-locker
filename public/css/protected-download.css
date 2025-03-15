@@ -1,0 +1,148 @@
+.wcl-protected-download {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.wcl-start-download,
+.wcl-submit-password,
+.wcl-download-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.wcl-start-download:hover,
+.wcl-submit-password:hover,
+.wcl-download-button:hover {
+    background: #135e96;
+}
+
+.wcl-countdown-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.wcl-timer {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.wcl-progress-bar {
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    margin: 10px 0;
+}
+
+.wcl-progress-bar div {
+    height: 100%;
+    background: #2271b1;
+    border-radius: 2px;
+    transition: width 1s linear;
+}
+
+.wcl-password-form {
+    margin: 20px 0;
+}
+
+.wcl-form-group {
+    margin-bottom: 15px;
+}
+
+.wcl-password-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wcl-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.wcl-message.error {
+    background: #fbeaea;
+    color: #dc3232;
+}
+
+.wcl-message.success {
+    background: #ecf7ed;
+    color: #46b450;
+}
+.wcl-initial-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    margin: 10px 0;
+}
+
+.wcl-initial-button:hover {
+    background-color: #0056b3;
+}
+
+.wcl-password-form-wrapper {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.wcl-form-group {
+    margin-bottom: 15px;
+}
+
+.wcl-form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.wcl-password-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wcl-form-actions {
+    margin-top: 15px;
+}
+
+.wcl-submit-btn,
+.wcl-cancel-btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.wcl-submit-btn {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+}
+
+.wcl-cancel-btn {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    margin-left: 10px;
+}

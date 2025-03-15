@@ -1,0 +1,156 @@
+/* List table styles */
+.column-shortcode { width: 15%; }
+.column-downloads { width: 10%; }
+.column-status { width: 10%; }
+
+/* Copy shortcode styles */
+.copied {
+    display: none;
+    color: green;
+    margin-left: 5px;
+    font-style: italic;
+}
+
+/* Loading state */
+.wcl-loading {
+    cursor: wait;
+    opacity: 0.8;
+}
+
+/* Filters styling */
+.tablenav .actions select {
+    margin-right: 8px;
+}
+
+/* Notice styling */
+.wcl-notice {
+    margin: 5px 0 15px;
+}
+
+/* Row actions styling */
+.row-actions {
+    visibility: hidden;
+}
+
+tr:hover .row-actions {
+    visibility: visible;
+}
+
+/* Bulk actions styling */
+.bulkactions select[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.wcl-loading {
+    cursor: wait !important;
+}
+.wcl-loading * {
+    cursor: wait !important;
+}
+/* Form Styles */
+.source-type-selector {
+    margin: 0;
+}
+
+.source-type-option {
+    margin-bottom: 8px;
+    display: block;
+}
+
+.file-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.selected-file-name {
+    margin-left: 10px;
+    font-style: italic;
+}
+
+.existing-file {
+    margin: 5px 0;
+    padding: 5px 10px;
+    background: #f0f0f1;
+    border-radius: 3px;
+}
+
+.wcl-message {
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-left: 4px solid;
+}
+
+.wcl-message.success {
+    background: #f0f8f0;
+    border-color: #46b450;
+}
+
+.wcl-message.error {
+    background: #fef1f1;
+    border-color: #d63638;
+}
+
+.source-row {
+    display: none;
+}
+
+.submit-container {
+    position: relative;
+    margin-top: 20px;
+}
+
+.submit-container .spinner {
+    float: none;
+    position: absolute;
+    left: 100px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+}
+
+.spinner.is-active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.required {
+    color: #d63638;
+}
+
+#wcl-messages {
+    margin: 15px 0;
+}
+.wcl-shortcode-section {
+        margin: 20px 0;
+        padding: 15px;
+        background: #fff;
+        border: 1px solid #ccd0d4;
+        box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    }
+
+    .wcl-shortcode-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+    }
+
+    .wcl-shortcode-display code {
+        padding: 8px 12px;
+        background: #f0f0f1;
+        border: 1px solid #ddd;
+    }
+
+    .wcl-copy-shortcode {
+        display: flex !important;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .wcl-copy-shortcode .dashicons {
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+    }

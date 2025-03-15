@@ -1,0 +1,169 @@
+/* Protected Content Styles */
+.wcl-protected-content {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 15px 0;
+}
+
+.wcl-preview-content {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #dee2e6;
+}
+
+.wcl-protection-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Form Styles */
+.wcl-form-group {
+    margin-bottom: 15px;
+}
+
+.wcl-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.wcl-form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.wcl-submit-btn {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.wcl-submit-btn:hover {
+    background: #0056b3;
+}
+
+/* Download Button Styles */
+.wcl-download-button {
+    display: inline-flex;
+    align-items: center;
+    background: #28a745;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.wcl-download-button:hover {
+    background: #218838;
+    color: #fff;
+    text-decoration: none;
+}
+
+.wcl-button-icon {
+    margin-right: 8px;
+}
+
+.wcl-button-icon svg {
+    fill: currentColor;
+}
+
+.wcl-file-size {
+    margin-left: 8px;
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+/* Countdown Styles */
+.wcl-countdown {
+    text-align: center;
+    padding: 20px;
+}
+
+.wcl-countdown-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.wcl-countdown-segment {
+    text-align: center;
+}
+
+.wcl-countdown-segment span {
+    font-size: 2em;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.wcl-countdown-segment label {
+    display: block;
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+.wcl-countdown-separator {
+    margin: 0 10px;
+    font-size: 2em;
+    color: #343a40;
+}
+
+.wcl-countdown-progress {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.wcl-progress-bar {
+    height: 100%;
+    background: #007bff;
+    transition: width 1s linear;
+}
+
+/* Message Styles */
+.wcl-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.wcl-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.wcl-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive Styles */
+@media (max-width: 576px) {
+    .wcl-protection-wrapper {
+        padding: 15px;
+    }
+
+    .wcl-countdown-segment span {
+        font-size: 1.5em;
+    }
+
+    .wcl-download-button {
+        width: 100%;
+        justify-content: center;
+    }
+}

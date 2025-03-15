@@ -1,0 +1,509 @@
+/* Protected Content Styles */
+.wcl-protected-content {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 15px 0;
+}
+
+.wcl-preview-content {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #dee2e6;
+}
+
+.wcl-protection-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Form Styles */
+.wcl-form-group {
+    margin-bottom: 15px;
+}
+
+.wcl-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.wcl-form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.wcl-submit-btn {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.wcl-submit-btn:hover {
+    background: #0056b3;
+}
+
+/* Download Button Styles */
+.wcl-download-button {
+    display: inline-flex;
+    align-items: center;
+    background: #28a745;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.wcl-download-button:hover {
+    background: #218838;
+    color: #fff;
+    text-decoration: none;
+}
+
+.wcl-button-icon {
+    margin-right: 8px;
+}
+
+.wcl-button-icon svg {
+    fill: currentColor;
+}
+
+.wcl-file-size {
+    margin-left: 8px;
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+/* Countdown Styles */
+.wcl-countdown {
+    text-align: center;
+    padding: 20px;
+}
+
+.wcl-countdown-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.wcl-countdown-segment {
+    text-align: center;
+}
+
+.wcl-countdown-segment span {
+    font-size: 2em;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.wcl-countdown-segment label {
+    display: block;
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+.wcl-countdown-separator {
+    margin: 0 10px;
+    font-size: 2em;
+    color: #343a40;
+}
+
+.wcl-countdown-progress {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.wcl-progress-bar {
+    height: 100%;
+    background: #007bff;
+    transition: width 1s linear;
+}
+
+/* Message Styles */
+.wcl-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.wcl-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.wcl-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive Styles */
+@media (max-width: 576px) {
+    .wcl-protection-wrapper {
+        padding: 15px;
+    }
+
+    .wcl-countdown-segment span {
+        font-size: 1.5em;
+    }
+
+    .wcl-download-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+.wcl-password-container {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.wcl-password-box {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.wcl-password-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.wcl-password-value {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #fff;
+    border: 1px dashed #ccc;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.wcl-copy-password {
+    display: block;
+    margin: 10px auto 0;
+    padding: 5px 15px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.wcl-copy-password:hover {
+    background: #135e96;
+}
+
+.wcl-password-instructions {
+    font-size: 13px;
+    color: #666;
+}
+
+.wcl-loading {
+    padding: 15px;
+    text-align: center;
+    color: #666;
+}
+
+.wcl-error-message {
+    color: #dc3232;
+    padding: 10px;
+    background: #fbeaea;
+    border-radius: 4px;
+}
+
+.wcl-retry-button {
+    display: block;
+    margin: 10px auto 0;
+    padding: 5px 15px;
+    background: #dc3232;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.wcl-download-button-wrapper {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .wcl-download-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #2271b1;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .wcl-download-button:hover {
+            background-color: #135e96;
+            color: #ffffff;
+        }
+        .wcl-button-icon {
+            margin-right: 8px;
+        }
+		.wcl-download-wrapper {
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.wcl-initial-button,
+.wcl-download-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background-color: #2271b1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.wcl-initial-button:hover,
+.wcl-download-button:hover {
+    background-color: #135e96;
+    color: white;
+}
+
+.wcl-password-form-wrapper {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f8f8f8;
+}
+
+.wcl-form-group {
+    margin-bottom: 15px;
+}
+
+.wcl-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.wcl-password-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wcl-message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.wcl-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.wcl-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.wcl-form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.wcl-submit-btn,
+.wcl-cancel-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.wcl-submit-btn {
+    background-color: #2271b1;
+    color: white;
+    border: none;
+}
+
+.wcl-cancel-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+}
+
+.wcl-submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.wcl-protected-download {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.wcl-start-download,
+.wcl-submit-password,
+.wcl-download-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.wcl-start-download:hover,
+.wcl-submit-password:hover,
+.wcl-download-button:hover {
+    background: #135e96;
+}
+
+.wcl-countdown-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.wcl-timer {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.wcl-progress-bar {
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    margin: 10px 0;
+}
+
+.wcl-progress-bar div {
+    height: 100%;
+    background: #2271b1;
+    border-radius: 2px;
+    transition: width 1s linear;
+}
+
+.wcl-password-form {
+    margin: 20px 0;
+}
+
+.wcl-form-group {
+    margin-bottom: 15px;
+}
+
+.wcl-password-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wcl-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.wcl-message.error {
+    background: #fbeaea;
+    color: #dc3232;
+}
+
+.wcl-message.success {
+    background: #ecf7ed;
+    color: #46b450;
+}
+.wcl-initial-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    margin: 10px 0;
+}
+
+.wcl-initial-button:hover {
+    background-color: #0056b3;
+}
+
+.wcl-password-form-wrapper {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.wcl-form-group {
+    margin-bottom: 15px;
+}
+
+.wcl-form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.wcl-password-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.wcl-form-actions {
+    margin-top: 15px;
+}
+
+.wcl-submit-btn,
+.wcl-cancel-btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.wcl-submit-btn {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+}
+
+.wcl-cancel-btn {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    margin-left: 10px;
+}

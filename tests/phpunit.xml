@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    bootstrap="bootstrap.php"
+    backupGlobals="false"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+>
+    <testsuites>
+        <testsuite name="WP Content Locker Integration Tests">
+            <directory prefix="test-" suffix=".php">./integration</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../includes</directory>
+            <exclude>
+                <directory suffix=".php">../admin</directory>
+                <directory suffix=".php">../public</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

@@ -81,6 +81,27 @@ class Public_Class {
      * Register the JavaScript for the public-facing side of the site.
      */
     public function enqueue_scripts() {
+		// Enqueue countdown.js
+    wp_enqueue_script(
+        'wcl-countdown',
+        WP_CONTENT_LOCKER_PUBLIC_URL . 'js/countdown.js',
+        array('jquery'),
+        $this->version,
+        true
+    );
+
+    // Correct localization for countdown script
+    wp_localize_script('wcl-countdown', 'wclCountdown', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wp_rest'),
+        'apiEndpoint' => esc_url_raw(rest_url('wp-content-locker/v2')),
+        'siteUrl' => get_site_url(),
+        'ga4Enabled' => get_option('wcl_ga4_enabled', false),
+        'ga4MeasurementId' => get_option('wcl_ga4_measurement_id', ''),
+        'gtmContainerId' => get_option('wcl_gtm_container_id', ''),
+        'baseUrl' => parse_url(get_site_url(), PHP_URL_PATH) ?: '',
+        'debug' => WP_CONTENT_LOCKER_DEBUG
+    ));
         wp_enqueue_script(
             $this->plugin_name,
             WP_CONTENT_LOCKER_PUBLIC_URL . 'js/protected-download.js',

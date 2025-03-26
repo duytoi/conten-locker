@@ -8,233 +8,200 @@ class WCLCountdown {
      * @param {Object} settings Configuration settings
      */
     constructor(settings) {
-    // Merge with global settings from localized data
-    this.settings = {
-        ...{
-            // Default settings
-            mode: 'single',
-            firstTime: 0,
-            secondTime: 0,
-            protectionId: '',
-            messages: {
-                first: 'Please wait...',
-                second: 'Almost there...',
-                redirect: 'Redirecting...',
-                success: 'Success!',
-                error: 'An error occurred'
+        // Debug log for initialization
+        if (settings.debug) {
+            console.log('WCL Settings:', {
+                apiEndpoint: wclCountdown?.apiEndpoint,
+                siteUrl: wclCountdown?.siteUrl,
+                baseUrl: wclCountdown?.baseUrl
+            });
+        }
+
+        // Merge with global settings from localized data
+        this.settings = {
+            ...{
+                // Default settings
+                mode: 'single',
+                firstTime: 0,
+                secondTime: 0,
+                protectionId: '',
+                messages: {
+                    first: 'Please wait...',
+                    second: 'Almost there...',
+                    redirect: 'Redirecting...',
+                    success: 'Success!',
+                    error: 'An error occurred'
+                },
+                ga4Enabled: false,
+                ga4MeasurementId: '',
+                gtmContainerId: '',
+                apiEndpoint: wclCountdown?.apiEndpoint || '/wp-json/wp-content-locker/v2', // Changed to v2
+                nonce: wclCountdown?.nonce || '',
+                debug: false,
+                redirectUrl: ''
             },
-            ga4Enabled: false,
-            ga4MeasurementId: '',
-            gtmContainerId: '',
-            apiEndpoint: '',
-            nonce: '',
-            debug: false
-        },
-        ...wclCountdown, // Merge with localized WordPress data
-        ...settings // Merge with instance settings
-    };
-
-    // Debug logging
-    if (this.settings.debug) {
-        console.log('WCLCountdown initialized with settings:', this.settings);
-        console.log('REST API Endpoint:', this.settings.apiEndpoint);
-        console.log('Site URL:', this.settings.siteUrl);
-        console.log('Base URL:', this.settings.baseUrl);
-    }
-
-    // Initialize state
-    this.state = {
-        isActive: false,
-        isPaused: false,
-        currentTime: this.settings.mode === 'double' ? this.settings.firstTime : this.settings.countdown_time,
-        timerInterval: null,
-        stage: 'first',
-        verificationToken: null,
-        clientId: null
-    };
-
-    // Find DOM elements
-    try {
-        this.elements = {
-            container: document.querySelector('.wcl-countdown'),
-            timerDisplay: document.querySelector('.wcl-countdown-timer'),
-            messageDisplay: document.querySelector('.wcl-countdown-message'),
-            passwordContainer: document.querySelector('.wcl-password-container'),
-            loadingIndicator: document.querySelector('.wcl-loading-indicator'),
-            errorDisplay: document.querySelector('.wcl-error-message')
+            ...wclCountdown, // Merge with localized WordPress data
+            ...settings // Merge with instance settings
         };
 
-        if (!this.elements.container || !this.elements.timerDisplay || !this.elements.messageDisplay) {
-            throw new Error('Required DOM elements not found');
-        }
-    } catch (error) {
-        console.error('DOM initialization error:', error);
-        return;
+        // Initialize state
+        this.state = {
+            isActive: false,
+            isPaused: false,
+            currentTime: this.settings.mode === 'double' ? 
+                        this.settings.firstTime : 
+                        (this.settings.countdown_time || 60),
+            timerInterval: null,
+            stage: 'first',
+            verificationToken: null,
+            clientId: null,
+            isVerified: false,
+            hasError: false
+        };
+
+        // Find and validate DOM elements
+        this.initializeDOMElements();
+
+        // Bind methods to maintain context
+        this.bindMethods();
+
+        // Add event listeners
+        this.addEventListeners();
+
+        // Initialize analytics and start countdown
+        this.initializeAnalytics()
+            .then(() => {
+                if (this.settings.debug) {
+                    console.log('Analytics initialized successfully');
+                }
+                this.init();
+            })
+            .catch(error => {
+                console.error('Analytics initialization error:', error);
+                this.init(); // Continue without analytics
+            });
     }
 
-    // Bind methods to maintain context
-    this.boundMethods = {
-        handleVisibilityChange: this.handleVisibilityChange.bind(this),
-        startCountdown: this.startCountdown.bind(this),
-        updateTimer: this.updateTimer.bind(this),
-        completeCountdown: this.completeCountdown.bind(this),
-        verifyTraffic: this.verifyTraffic.bind(this),
-        handleError: this.handleError.bind(this)
-    };
-
-    // Add event listeners
-    try {
-        // Page visibility
-        document.addEventListener('visibilitychange', this.boundMethods.handleVisibilityChange);
-
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-            this.cleanup();
-        });
-
-        // Handle API errors
-        window.addEventListener('unhandledrejection', (event) => {
-            if (event.reason && event.reason.isApiError) {
-                this.handleError(event.reason);
-                event.preventDefault();
-            }
-        });
-    } catch (error) {
-        console.error('Event listener initialization error:', error);
-    }
-
-    // Initialize analytics
-    this.initializeAnalytics()
-        .then(() => {
-            // Start the countdown process
-            this.init();
-        })
-        .catch(error => {
-            console.error('Analytics initialization error:', error);
-            // Continue with initialization even if analytics fails
-            this.init();
-        });
-}
-
-// Add supporting methods:
-async initializeAnalytics() {
-    if (this.settings.ga4Enabled) {
+    /**
+     * Initialize DOM elements
+     */
+    initializeDOMElements() {
         try {
-            // Initialize GA4
-            if (this.settings.ga4MeasurementId) {
-                await this.loadGA4();
+            this.elements = {
+                container: document.querySelector('.wcl-countdown'),
+                timerDisplay: document.querySelector('.wcl-countdown-timer'),
+                messageDisplay: document.querySelector('.wcl-countdown-message'),
+                passwordContainer: document.querySelector('.wcl-password-container'),
+                loadingIndicator: document.querySelector('.wcl-loading-indicator'),
+                errorDisplay: document.querySelector('.wcl-error-message')
+            };
+
+            // Validate required elements
+            if (!this.elements.container || !this.elements.timerDisplay || !this.elements.messageDisplay) {
+                throw new Error('Required DOM elements not found');
             }
-            
+        } catch (error) {
+            console.error('DOM initialization error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Bind class methods
+     */
+    bindMethods() {
+        this.boundMethods = {
+            handleVisibilityChange: this.handleVisibilityChange.bind(this),
+            startCountdown: this.startCountdown.bind(this),
+            updateTimer: this.updateTimer.bind(this),
+            completeCountdown: this.completeCountdown.bind(this),
+            verifyTraffic: this.verifyTraffic.bind(this),
+            handleError: this.handleError.bind(this)
+        };
+    }
+
+    /**
+     * Add event listeners
+     */
+    addEventListeners() {
+        try {
+            // Page visibility
+            document.addEventListener('visibilitychange', this.boundMethods.handleVisibilityChange);
+
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => this.cleanup());
+
+            // Handle API errors
+            window.addEventListener('unhandledrejection', (event) => {
+                if (event.reason?.isApiError) {
+                    this.handleError(event.reason);
+                    event.preventDefault();
+                }
+            });
+        } catch (error) {
+            console.error('Event listener initialization error:', error);
+        }
+    }
+
+    /**
+     * Initialize analytics
+     */
+    async initializeAnalytics() {
+        if (!this.settings.ga4Enabled) return;
+
+        try {
+            if (this.settings.debug) {
+                console.log('Initializing analytics with settings:', {
+                    ga4Enabled: this.settings.ga4Enabled,
+                    ga4MeasurementId: this.settings.ga4MeasurementId,
+                    gtmContainerId: this.settings.gtmContainerId
+                });
+            }
+
             // Initialize GTM
             if (this.settings.gtmContainerId) {
                 await this.loadGTM();
+                if (this.settings.debug) {
+                    console.log('GTM initialized successfully');
+                }
             }
-            
+
+            // Initialize GA4 if not using GTM
+            if (this.settings.ga4MeasurementId && !this.settings.gtmContainerId) {
+                await this.loadGA4();
+                if (this.settings.debug) {
+                    console.log('GA4 initialized successfully');
+                }
+            }
+
             // Get or generate client ID
             this.state.clientId = await this.getClientId();
-            
+
             if (this.settings.debug) {
-                console.log('Analytics initialized successfully');
-                console.log('Client ID:', this.state.clientId);
+                console.log('Analytics initialization complete:', {
+                    clientId: this.state.clientId
+                });
             }
         } catch (error) {
             console.error('Analytics initialization error:', error);
             throw error;
         }
     }
-}
-
-cleanup() {
-    // Clear intervals
-    if (this.state.timerInterval) {
-        clearInterval(this.state.timerInterval);
-    }
-
-    // Remove event listeners
-    document.removeEventListener('visibilitychange', this.boundMethods.handleVisibilityChange);
-
-    // Clear any stored data
-    if (this.settings.debug) {
-        console.log('Cleanup completed');
-    }
-}
-
-handleError(error) {
-    // Log error
-    console.error('WCLCountdown error:', error);
-
-    // Display error to user
-    if (this.elements.errorDisplay) {
-        this.elements.errorDisplay.textContent = this.settings.messages.error;
-        this.elements.errorDisplay.style.display = 'block';
-    }
-
-    // Track error event
-    if (this.settings.ga4Enabled) {
-        this.trackEvent('countdown_error', {
-            error_message: error.message,
-            error_code: error.code || 'unknown'
-        });
-    }
-}
-
-buildApiUrl(endpoint) {
-    // Ensure we have a valid base URL
-    const baseUrl = this.settings.siteUrl || window.location.origin;
-    
-    // Construct the full URL
-    let apiUrl = `${baseUrl}${this.settings.baseUrl}/wp-json/wp-content-locker/${this.settings.apiVersion}/${endpoint}`;
-    
-    if (this.settings.debug) {
-        console.log('Built API URL:', apiUrl);
-    }
-    
-    return apiUrl;
-}
 
     /**
      * Initialize countdown functionality
      */
     init() {
-        console.log('Initializing countdown with settings:', this.settings);
-
-        // Set initial stage and time
-        if (this.settings.mode === 'double') {
-            this.currentTime = this.settings.firstTime;
-            this.messageDisplay.textContent = this.settings.messages.first;
-        } else {
-            this.currentTime = this.settings.countdown_time;
-            this.messageDisplay.textContent = this.settings.messages.first;
+        if (this.settings.debug) {
+            console.log('Initializing countdown with settings:', this.settings);
         }
 
-        // Update display
+        // Set initial message and time
+        this.elements.messageDisplay.textContent = this.settings.messages.first;
         this.updateTimerDisplay();
 
         // Start verification process
-        if (this.settings.ga4Enabled) {
-            this.initGA4AndGTM().then(() => this.verifyTraffic());
-        } else {
-            this.verifyTraffic();
-        }
-
-        // Add visibility change listener
-        document.addEventListener('visibilitychange', this.handleVisibilityChange);
-    }
-
-    /**
-     * Initialize GA4 and GTM
-     */
-    async initGA4AndGTM() {
-        try {
-            if (this.settings.gtmContainerId) {
-                await this.loadGTM();
-            }
-            if (this.settings.ga4MeasurementId && !this.settings.gtmContainerId) {
-                await this.loadGA4();
-            }
-        } catch (error) {
-            console.error('Analytics initialization error:', error);
-        }
+        this.verifyTraffic();
     }
 
     /**
@@ -276,59 +243,72 @@ buildApiUrl(endpoint) {
     }
 
     /**
+     * Build API URL
+     * @param {string} endpoint - The API endpoint
+     * @returns {string} Complete API URL
+     */
+    buildApiUrl(endpoint) {
+        const baseUrl = this.settings.siteUrl || window.location.origin;
+        return `${baseUrl}/wp-json/wp-content-locker/v2/${endpoint}`;
+    }
+
+    /**
      * Verify traffic before starting countdown
      */
     async verifyTraffic() {
-		
-		// Thêm debug log này vào đầu hàm verifyTraffic
-console.log('WCL Settings:', {
-    apiEndpoint: wclCountdown.apiEndpoint,
-    siteUrl: wclCountdown.siteUrl,
-    baseUrl: wclCountdown.baseUrl
-});
         try {
             this.showLoading();
-            const clientId = await this.getClientId();
-            // Build correct API URL using baseUrl
-			const apiUrl = `${wclCountdown.apiEndpoint}/verify-traffic`;
-			console.log('Making API request to:', apiUrl);
-            console.log('Verifying traffic with client ID:', clientId);
+
+            const apiUrl = this.buildApiUrl('verify-traffic');
+
+            if (this.settings.debug) {
+                console.log('API Request Details:', {
+                    url: apiUrl,
+                    protectionId: this.settings.protectionId,
+                    nonce: this.settings.nonce
+                });
+            }
 
             const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-WP-Nonce': wclCountdown.nonce
-            },
-            body: JSON.stringify({
-                protection_id: this.settings.protectionId,
-                gtm_data: await this.getGTMData(),
-                api_version: wclCountdown.apiVersion
-            }),
-            credentials: 'same-origin'
-        });
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': this.settings.nonce
+                },
+                body: JSON.stringify({
+                    protection_id: this.settings.protectionId,
+                    gtm_data: await this.getGTMData()
+                }),
+                credentials: 'same-origin'
+            });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+            }
 
-        const data = await response.json();
-            
+            const data = await response.json();
+
+            if (this.settings.debug) {
+                console.log('API Response:', data);
+            }
+
             if (data.success) {
-                this.verificationToken = data.token;
-                this.isActive = true;
+                this.state.verificationToken = data.token;
+                this.state.isActive = true;
+                this.state.isVerified = true;
                 this.startCountdown();
                 
-                this.trackEvent('countdown_started', {
+                this.trackEvent('countdown_verified', {
                     protection_id: this.settings.protectionId,
-                    verification_token: this.verificationToken
+                    verification_token: this.state.verificationToken
                 });
             } else {
-                this.showError(data.message || 'Traffic verification failed');
+                throw new Error(data.message || 'Traffic verification failed');
             }
         } catch (error) {
             console.error('Traffic verification error:', error);
-            this.showError('Unable to verify traffic. Please try again.');
+            this.handleError(error);
         } finally {
             this.hideLoading();
         }
@@ -338,11 +318,13 @@ console.log('WCL Settings:', {
      * Start the countdown
      */
     startCountdown() {
-        if (!this.isActive || this.isPaused) return;
+        if (!this.state.isActive || this.state.isPaused) return;
 
-        this.timerInterval = setInterval(() => {
-            if (this.currentTime > 0) {
-                this.currentTime--;
+        clearInterval(this.state.timerInterval);
+
+        this.state.timerInterval = setInterval(() => {
+            if (this.state.currentTime > 0) {
+                this.state.currentTime--;
                 this.updateTimerDisplay();
             } else {
                 this.completeCountdown();
@@ -350,8 +332,8 @@ console.log('WCL Settings:', {
         }, 1000);
 
         this.trackEvent('countdown_stage_started', {
-            stage: this.stage,
-            duration: this.currentTime
+            stage: this.state.stage,
+            duration: this.state.currentTime
         });
     }
 
@@ -359,45 +341,51 @@ console.log('WCL Settings:', {
      * Update timer display
      */
     updateTimerDisplay() {
-        const minutes = Math.floor(this.currentTime / 60);
-        const seconds = this.currentTime % 60;
-        this.timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        const minutes = Math.floor(this.state.currentTime / 60);
+        const seconds = this.state.currentTime % 60;
+        this.elements.timerDisplay.textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
     }
 
     /**
      * Handle countdown completion
      */
     completeCountdown() {
-        clearInterval(this.timerInterval);
+        clearInterval(this.state.timerInterval);
 
-        if (this.settings.mode === 'double' && this.stage === 'first') {
-            this.stage = 'second';
-            this.currentTime = this.settings.secondTime;
-            this.messageDisplay.textContent = this.settings.messages.second;
+        if (this.settings.mode === 'double' && this.state.stage === 'first') {
+            this.state.stage = 'second';
+            this.state.currentTime = this.settings.secondTime;
+            this.elements.messageDisplay.textContent = this.settings.messages.second;
             this.startCountdown();
         } else {
             this.showComplete();
         }
 
         this.trackEvent('countdown_stage_completed', {
-            stage: this.stage
+            stage: this.state.stage
         });
     }
 
     /**
-     * Show completion message and handle redirect if needed
+     * Show completion message and handle redirect
      */
     showComplete() {
-        this.messageDisplay.textContent = this.settings.messages.redirect;
-        this.container.classList.add('wcl-countdown-complete');
+        this.elements.messageDisplay.textContent = this.settings.messages.success;
+        this.elements.container.classList.add('wcl-countdown-complete');
 
         if (this.settings.redirectUrl) {
+            this.elements.messageDisplay.textContent = this.settings.messages.redirect;
             setTimeout(() => {
                 window.location.href = this.settings.redirectUrl;
             }, 1000);
         }
 
-        this.trackEvent('countdown_completed');
+        this.trackEvent('countdown_completed', {
+            total_time: this.settings.mode === 'double' ? 
+                       this.settings.firstTime + this.settings.secondTime :
+                       this.settings.countdown_time
+        });
     }
 
     /**
@@ -405,13 +393,15 @@ console.log('WCL Settings:', {
      */
     handleVisibilityChange() {
         if (document.hidden) {
-            this.isPaused = true;
-            clearInterval(this.timerInterval);
+            this.state.isPaused = true;
+            clearInterval(this.state.timerInterval);
             this.trackEvent('countdown_paused');
         } else {
-            this.isPaused = false;
-            this.startCountdown();
-            this.trackEvent('countdown_resumed');
+            this.state.isPaused = false;
+            if (this.state.isVerified) {
+                this.startCountdown();
+                this.trackEvent('countdown_resumed');
+            }
         }
     }
 
@@ -446,10 +436,8 @@ console.log('WCL Settings:', {
      * Get GTM Data
      */
     async getGTMData() {
-        const clientId = await this.getClientId();
-        
         return {
-            client_id: clientId,
+            client_id: await this.getClientId(),
             page_url: window.location.href,
             page_title: document.title,
             referrer: document.referrer,
@@ -493,15 +481,12 @@ console.log('WCL Settings:', {
         const baseParams = {
             protection_id: this.settings.protectionId,
             countdown_mode: this.settings.mode,
-            stage: this.stage,
-            client_id: localStorage.getItem('wcl_client_id'),
+            stage: this.state.stage,
+            client_id: this.state.clientId,
             event_time: new Date().toISOString()
         };
 
-        const eventParams = {
-            ...baseParams,
-            ...params
-        };
+        const eventParams = { ...baseParams, ...params };
 
         // Track via GTM
         if (window.dataLayer) {
@@ -521,22 +506,56 @@ console.log('WCL Settings:', {
      * Show loading state
      */
     showLoading() {
-        this.container.classList.add('wcl-loading');
+        this.elements.container.classList.add('wcl-loading');
+        if (this.elements.loadingIndicator) {
+            this.elements.loadingIndicator.style.display = 'block';
+        }
     }
 
     /**
      * Hide loading state
      */
     hideLoading() {
-        this.container.classList.remove('wcl-loading');
+        this.elements.container.classList.remove('wcl-loading');
+        if (this.elements.loadingIndicator) {
+            this.elements.loadingIndicator.style.display = 'none';
+        }
     }
 
     /**
      * Show error message
      */
     showError(message) {
-        this.messageDisplay.textContent = message;
-        this.container.classList.add('wcl-error');
+        this.state.hasError = true;
+        if (this.elements.errorDisplay) {
+            this.elements.errorDisplay.textContent = message;
+            this.elements.errorDisplay.style.display = 'block';
+        }
+        this.elements.container.classList.add('wcl-error');
+        
+        this.trackEvent('countdown_error', {
+            error_message: message
+        });
+    }
+
+    /**
+     * Handle errors
+     */
+    handleError(error) {
+        console.error('WCLCountdown error:', error);
+        this.showError(error.message || this.settings.messages.error);
+    }
+
+    /**
+     * Cleanup resources
+     */
+    cleanup() {
+        clearInterval(this.state.timerInterval);
+        document.removeEventListener('visibilitychange', this.boundMethods.handleVisibilityChange);
+        
+        if (this.settings.debug) {
+            console.log('Cleanup completed');
+        }
     }
 }
 
@@ -545,26 +564,29 @@ jQuery(document).ready(function($) {
     const countdownElements = document.querySelectorAll('.wcl-countdown');
     
     countdownElements.forEach(element => {
-        const settings = {
-            mode: element.dataset.mode,
-            firstTime: parseInt(element.dataset.firstTime),
-            secondTime: parseInt(element.dataset.secondTime),
-            protectionId: element.dataset.protectionId,
-            messages: {
-                first: element.dataset.firstMessage,
-                second: element.dataset.secondMessage,
-                redirect: element.dataset.redirectMessage,
-                success: element.dataset.successMessage,
-                error: element.dataset.errorMessage || 'An error occurred'
-            },
-            ga4Enabled: element.dataset.ga4Enabled === 'true',
-            ga4MeasurementId: element.dataset.ga4MeasurementId,
-            gtmContainerId: element.dataset.gtmContainerId,
-            ajaxUrl: wclCountdown.ajaxUrl,
-            nonce: wclCountdown.nonce,
-            apiEndpoint: wclCountdown.apiEndpoint || '/wp-json/wp-content-locker/v2'
-        };
+        try {
+            const settings = {
+                mode: element.dataset.mode,
+                firstTime: parseInt(element.dataset.firstTime) || 60,
+                secondTime: parseInt(element.dataset.secondTime) || 30,
+                protectionId: element.dataset.protectionId,
+                messages: {
+                    first: element.dataset.firstMessage,
+                    second: element.dataset.secondMessage,
+                    redirect: element.dataset.redirectMessage,
+                    success: element.dataset.successMessage,
+                    error: element.dataset.errorMessage || 'An error occurred'
+                },
+                ga4Enabled: element.dataset.ga4Enabled === 'true',
+                ga4MeasurementId: element.dataset.ga4MeasurementId,
+                gtmContainerId: element.dataset.gtmContainerId,
+                redirectUrl: element.dataset.redirectUrl,
+                debug: element.dataset.debug === 'true'
+            };
 
-        new WCLCountdown(settings);
+            new WCLCountdown(settings);
+        } catch (error) {
+            console.error('Failed to initialize countdown:', error);
+        }
     });
 });
